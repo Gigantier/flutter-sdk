@@ -21,7 +21,7 @@ class Gigantier {
   final String appName;
   final String protocol;
   final String apiVersion;
-  final http.Client client;
+  http.Client client;
 
   final prefs = Preferences();
   
@@ -32,14 +32,16 @@ class Gigantier {
     this.scope,
     this.appName,
     { this.protocol = 'https', this.apiVersion = 'v1', this.client }
-  );
+  ) {
+    if (this.client == null) this.client = http.Client();
+  } 
 
   get _baseUrl => '$protocol://$hostname/api${apiVersion != '' ? '/$apiVersion' : ''}';
 
   static Future<Map<String, String>> baseHeaders(appName) async {    
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
-    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.1'; // TODO: obtain version from pubspec.yaml
+    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.2'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }

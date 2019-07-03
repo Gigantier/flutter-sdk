@@ -1,6 +1,6 @@
 name: gigantier_sdk
 description: SDK for Gigantier API
-version: 1.0.1
+version: 1.0.2
 author: Gigantier <ops@gigantier.com>
 homepage: https://gigantier.com/
 repository: https://github.com/Gigantier/flutter-sdk
