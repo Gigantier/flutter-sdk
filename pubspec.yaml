@@ -1,7 +1,7 @@
 name: gigantier_sdk
 description: SDK for Gigantier API
 version: 1.0.0
-author: Gigantier
+author: Gigantier <ops@gigantier.com>
 homepage: https://gigantier.com/
 
 environment:
