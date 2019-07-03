@@ -21,7 +21,9 @@ class Gigantier {
   final String appName;
   final String protocol;
   final String apiVersion;
-  http.Client client;
+  final http.Client client;
+
+  http.Client _apiClient;
 
   final prefs = Preferences();
   
@@ -32,16 +34,21 @@ class Gigantier {
     this.scope,
     this.appName,
     { this.protocol = 'https', this.apiVersion = 'v1', this.client }
-  ) {
-    if (this.client == null) this.client = http.Client();
-  } 
+  );
 
   get _baseUrl => '$protocol://$hostname/api${apiVersion != '' ? '/$apiVersion' : ''}';
+
+  _getClient() {
+    if (_apiClient == null) {
+      _apiClient = this.client != null ? this.client : http.Client();
+    }
+    return _apiClient;
+  }
 
   static Future<Map<String, String>> baseHeaders(appName) async {    
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
-    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.2'; // TODO: obtain version from pubspec.yaml
+    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.3'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -69,7 +76,7 @@ class Gigantier {
 
   Future<Map<String, dynamic>> _execPost(String uri, bool isUserApi, int retries, { Map<String, dynamic> body }) async {
     final headers = await baseHeaders(appName);
-    return client.post('$_baseUrl$uri', headers: headers, body: body).then((response) async {
+    return _getClient().post('$_baseUrl$uri', headers: headers, body: body).then((response) async {
       final code = response.statusCode;
       final responseBody = Map<String, dynamic>.from(json.decode(response.body));
 
@@ -144,7 +151,7 @@ class Gigantier {
     requestBody.addAll(extraBody);
 
     final headers = await baseHeaders(appName);
-    final response = await client.post('$_baseUrl$oauthPath', headers: headers, body: requestBody);
+    final response = await _getClient().post('$_baseUrl$oauthPath', headers: headers, body: requestBody);
 
     final body = Map<String, dynamic>.from(json.decode(response.body));
     final ok = body['ok'] as bool;
