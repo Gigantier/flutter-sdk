@@ -60,7 +60,7 @@ String appTokenResponse(String randomAppToken, int expires, String scope) {
 
 Map<String, String> appTokenRequest(String clientId, String clientSecret, String scope) {
   return {
-    'grant_type': Gigantier.grantTypeUser, 
+    'grant_type': Gigantier.grantTypeApp, 
     'client_id': clientId,
     'client_secret': clientSecret,
     'scope': scope

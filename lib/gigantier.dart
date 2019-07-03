@@ -38,7 +38,7 @@ class Gigantier {
 
   get _baseUrl => '$protocol://$hostname/api${apiVersion != '' ? '/$apiVersion' : ''}';
 
-  _getClient() {
+  http.Client _getClient() {
     if (_apiClient == null) {
       _apiClient = this.client != null ? this.client : http.Client();
     }
@@ -48,7 +48,7 @@ class Gigantier {
   static Future<Map<String, String>> baseHeaders(appName) async {    
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
-    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.3'; // TODO: obtain version from pubspec.yaml
+    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.4'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -143,7 +143,7 @@ class Gigantier {
 
   Future<Credential> _retrieveToken(String grantType, Map<String, dynamic> extraBody) async {
     final Map<String, dynamic> requestBody = {
-      'grant_type': grantTypeUser, 
+      'grant_type': grantType, 
       'client_id': clientId,
       'client_secret': clientSecret,
       'scope': scope,
