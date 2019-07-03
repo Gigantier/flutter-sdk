@@ -1,13 +1,11 @@
 library gigantier_sdk;
 
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:gigantier_sdk/auth/credential.dart';
 import 'package:gigantier_sdk/exceptions.dart';
 import 'package:gigantier_sdk/preferences.dart';
 import 'package:http/http.dart' as http;
-import 'package:yaml/yaml.dart';
 
 class Gigantier {
   static final String grantTypeApp = 'client_credentials';
@@ -15,7 +13,6 @@ class Gigantier {
   static final String grantTypeRefresh = 'refresh_token';
   static final String oauthPath = '/OAuth/token';
   static final int retries = 3;
-  static String _appVersion;
   
   final String hostname;
   final String clientId;
@@ -39,19 +36,12 @@ class Gigantier {
 
   get _baseUrl => '$protocol://$hostname/api${apiVersion != '' ? '/$apiVersion' : ''}';
 
-  static Future<Map<String, String>> baseHeaders(appName) async { 
-    File conf = File("pubspec.yaml");
-    final appVersion = _appVersion != null ? _appVersion : await conf.readAsString().then((String text) {
-      Map yaml = loadYaml(text);
-      return yaml['version'];
-    });
-    
+  static Future<Map<String, String>> baseHeaders(appName) async {    
     final headers = Map<String, String>();
-
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
-    headers['X-GIGANTIER-SDK-VERSION'] = appVersion;
+    headers['X-GIGANTIER-SDK-VERSION'] = '1.0.1'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
-    return headers;
+    return Future.value(headers);
   }
 
   Future<Credential> authenticate(String identifier, String password) async {
