@@ -69,7 +69,7 @@ Map<String, String> appTokenRequest(String clientId, String clientSecret, String
 
 Map<String, String> refreshTokenRequest(String clientId, String clientSecret, String scope, String refreshToken) {
   return {
-    'grant_type': Gigantier.grantTypeUser, 
+    'grant_type': Gigantier.grantTypeRefresh, 
     'client_id': clientId,
     'client_secret': clientSecret,
     'scope': scope,
