@@ -54,7 +54,7 @@ class Gigantier {
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
     headers['X-GIGANTIER-SDK-VERSION'] =
-        '1.0.6'; // TODO: obtain version from pubspec.yaml
+        '1.0.7'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -137,7 +137,7 @@ class Gigantier {
       return _execMethod(uri, isUserApi, retries - 1, method, body: body);
     } else if (code >= 400) throw _buildApiError(responseBody);
 
-    return responseBody;
+    return Future.value(responseBody);
   }
 
   Future<String> getAppToken({bool renew = false}) async {
