@@ -54,7 +54,7 @@ class Gigantier {
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
     headers['X-GIGANTIER-SDK-VERSION'] =
-        '1.0.7'; // TODO: obtain version from pubspec.yaml
+        '1.0.8'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -112,32 +112,23 @@ class Gigantier {
     else
       throw Exception('missing http method parameter');
 
-    final response = await call;
-    return _onResponse(uri, isUserApi, retries, method, response, body: body);
-  }
+    return call.then((response) async {
+      final code = response.statusCode;
+      final responseBody =
+          Map<String, dynamic>.from(json.decode(response.body));
 
-  Future<Map<String, dynamic>> _onResponse(
-    String uri,
-    bool isUserApi,
-    int retries,
-    HttpMethod method,
-    http.Response response, {
-    Map<String, dynamic> body,
-  }) async {
-    final code = response.statusCode;
-    final responseBody = Map<String, dynamic>.from(json.decode(response.body));
+      if (code == 401 && retries > 0 && isUserApi) {
+        final String userToken = await _getUserToken(renew: true);
+        body['access_token'] = userToken;
+        return _execMethod(uri, isUserApi, retries + 1, method, body: body);
+      } else if (code == 401 && retries > 0) {
+        final String appToken = await getAppToken(renew: true);
+        body['access_token'] = appToken;
+        return _execMethod(uri, isUserApi, retries - 1, method, body: body);
+      } else if (code >= 400) throw _buildApiError(responseBody);
 
-    if (code == 401 && retries > 0 && isUserApi) {
-      final String userToken = await _getUserToken(renew: true);
-      body['access_token'] = userToken;
-      return _execMethod(uri, isUserApi, retries + 1, method, body: body);
-    } else if (code == 401 && retries > 0) {
-      final String appToken = await getAppToken(renew: true);
-      body['access_token'] = appToken;
-      return _execMethod(uri, isUserApi, retries - 1, method, body: body);
-    } else if (code >= 400) throw _buildApiError(responseBody);
-
-    return Future.value(responseBody);
+      return responseBody;
+    });
   }
 
   Future<String> getAppToken({bool renew = false}) async {
