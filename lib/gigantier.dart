@@ -54,7 +54,7 @@ class Gigantier {
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
     headers['X-GIGANTIER-SDK-VERSION'] =
-        '1.0.9'; // TODO: obtain version from pubspec.yaml
+        '1.0.10'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -113,7 +113,8 @@ class Gigantier {
     Map<String, dynamic> body,
   }) async {
     final allHeaders = await baseHeaders(appName);
-    allHeaders.addAll(headers);
+    if (headers != null) allHeaders.addAll(headers);
+
     final url = '$_baseUrl$uri';
     Future<http.Response> call;
 
