@@ -54,7 +54,7 @@ class Gigantier {
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
     headers['X-GIGANTIER-SDK-VERSION'] =
-        '1.0.8'; // TODO: obtain version from pubspec.yaml
+        '1.0.9'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -69,23 +69,39 @@ class Gigantier {
   Future<Map<String, dynamic>> call(
     String uri, {
     Map<String, dynamic> body,
+    Map<String, String> headers,
     HttpMethod method = HttpMethod.post,
   }) async {
     final appToken = await getAppToken();
     final Map<String, dynamic> requestBody = body != null ? body : {};
     requestBody['access_token'] = appToken;
-    return _execMethod(uri, false, retries, method, body: requestBody);
+    return _execMethod(
+      uri,
+      false,
+      retries,
+      method,
+      body: requestBody,
+      headers: headers,
+    );
   }
 
   Future<Map<String, dynamic>> authenticatedCall(
     String uri, {
     Map<String, dynamic> body,
+    Map<String, String> headers,
     HttpMethod method = HttpMethod.post,
   }) async {
     final userToken = await _getUserToken();
     final Map<String, dynamic> requestBody = body != null ? body : {};
     requestBody['access_token'] = userToken;
-    return _execMethod(uri, true, retries, method, body: requestBody);
+    return _execMethod(
+      uri,
+      true,
+      retries,
+      method,
+      body: requestBody,
+      headers: headers,
+    );
   }
 
   Future<Map<String, dynamic>> _execMethod(
@@ -93,22 +109,24 @@ class Gigantier {
     bool isUserApi,
     int retries,
     HttpMethod method, {
+    Map<String, String> headers,
     Map<String, dynamic> body,
   }) async {
-    final headers = await baseHeaders(appName);
+    final allHeaders = await baseHeaders(appName);
+    allHeaders.addAll(headers);
     final url = '$_baseUrl$uri';
     Future<http.Response> call;
 
     final _client = _getClient();
 
     if (method == HttpMethod.post)
-      call = _client.post(url, headers: headers, body: body);
+      call = _client.post(url, headers: allHeaders, body: body);
     else if (method == HttpMethod.delete)
-      call = _client.delete(url, headers: headers);
+      call = _client.delete(url, headers: allHeaders);
     else if (method == HttpMethod.get)
-      call = _client.get(url, headers: headers);
+      call = _client.get(url, headers: allHeaders);
     else if (method == HttpMethod.put)
-      call = _client.put(url, headers: headers, body: body);
+      call = _client.put(url, headers: allHeaders, body: body);
     else
       throw Exception('missing http method parameter');
 
