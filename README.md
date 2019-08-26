@@ -10,7 +10,7 @@ Add this to your package's pubspec.yaml file:
 
 ```bash
 dependencies:
-  gigantier_sdk: ^1.0.5
+  gigantier_sdk: ^1.0.9
 ```
 
 Then install the package with `pub get` or `flutter pub get`.
