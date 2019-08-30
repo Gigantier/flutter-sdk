@@ -54,7 +54,7 @@ class Gigantier {
     final headers = Map<String, String>();
     headers['X-GIGANTIER-SDK-LANGUAGE'] = 'Flutter';
     headers['X-GIGANTIER-SDK-VERSION'] =
-        '1.0.10'; // TODO: obtain version from pubspec.yaml
+        '1.0.11'; // TODO: obtain version from pubspec.yaml
     headers['X-GIGANTIER-APPLICATION'] = appName;
     return Future.value(headers);
   }
@@ -123,9 +123,15 @@ class Gigantier {
     if (method == HttpMethod.post)
       call = _client.post(url, headers: allHeaders, body: body);
     else if (method == HttpMethod.delete)
-      call = _client.delete(url, headers: allHeaders);
+      call = _client.delete(
+        '$url?access_token=${body["access_token"]}',
+        headers: allHeaders,
+      );
     else if (method == HttpMethod.get)
-      call = _client.get(url, headers: allHeaders);
+      call = _client.get(
+        '$url?access_token=${body["access_token"]}',
+        headers: allHeaders,
+      );
     else if (method == HttpMethod.put)
       call = _client.put(url, headers: allHeaders, body: body);
     else

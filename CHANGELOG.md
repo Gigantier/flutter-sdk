@@ -9,3 +9,4 @@
 [1.0.8] Rollback _onResponse() method after _execMethod()
 [1.0.9] call() and authenticatedCall() with headers params
 [1.0.10] fix call/authenticatedCall header parametrization
+[1.0.11] fix delete and get method. Missing access_token in query string
